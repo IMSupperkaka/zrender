@@ -51,6 +51,10 @@ export function clientToLocal(
 ) {
     out = out || {};
 
+    calculateZrXY(el, e as ZRRawEvent, out);
+
+    return out;
+
     // According to the W3C Working Draft, offsetX and offsetY should be relative
     // to the padding edge of the target element. The only browser using this convention
     // is IE. Webkit uses the border edge, Opera uses the content edge, and FireFox does

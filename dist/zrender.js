@@ -1303,22 +1303,7 @@
         && +env.browser.version.split('.')[0] < 39;
     function clientToLocal(el, e, out, calculate) {
         out = out || {};
-        if (calculate) {
-            calculateZrXY(el, e, out);
-        }
-        else if (firefoxNotSupportOffsetXY
-            && e.layerX != null
-            && e.layerX !== e.offsetX) {
-            out.zrX = e.layerX;
-            out.zrY = e.layerY;
-        }
-        else if (e.offsetX != null) {
-            out.zrX = e.offsetX;
-            out.zrY = e.offsetY;
-        }
-        else {
-            calculateZrXY(el, e, out);
-        }
+        calculateZrXY(el, e, out);
         return out;
     }
     function calculateZrXY(el, e, out) {
@@ -1353,7 +1338,7 @@
         var eventType = e.type;
         var isTouch = eventType && eventType.indexOf('touch') >= 0;
         if (!isTouch) {
-            clientToLocal(el, e, e, calculate);
+            clientToLocal(el, e, e);
             var wheelDelta = getWheelDeltaMayPolyfill(e);
             e.zrDelta = wheelDelta ? wheelDelta / 120 : -(e.detail || 0) / 3;
         }
@@ -1361,7 +1346,7 @@
             var touch = eventType !== 'touchend'
                 ? e.targetTouches[0]
                 : e.changedTouches[0];
-            touch && clientToLocal(el, touch, e, calculate);
+            touch && clientToLocal(el, touch, e);
         }
         var button = e.button;
         if (e.which == null && button !== undefined && MOUSE_EVENT_REG.test(e.type)) {
@@ -5127,7 +5112,7 @@
         event && (event.zrByTouch = true);
     }
     function normalizeGlobalEvent(instance, event) {
-        return normalizeEvent(instance.dom, new FakeGlobalEvent(instance, event), true);
+        return normalizeEvent(instance.dom, new FakeGlobalEvent(instance, event));
     }
     function isLocalEl(instance, el) {
         var elTmp = el;
@@ -12791,16 +12776,19 @@
             }
         }
     }
-    function isLatin(ch) {
+    function isAlphabeticLetter(ch) {
         var code = ch.charCodeAt(0);
-        return code >= 0x21 && code <= 0x17F;
+        return code >= 0x20 && code <= 0x24F
+            || code >= 0x370 && code <= 0x10FF
+            || code >= 0x1200 && code <= 0x13FF
+            || code >= 0x1E00 && code <= 0x206F;
     }
     var breakCharMap = reduce(',&?/;] '.split(''), function (obj, ch) {
         obj[ch] = true;
         return obj;
     }, {});
     function isWordBreakChar(ch) {
-        if (isLatin(ch)) {
+        if (isAlphabeticLetter(ch)) {
             if (breakCharMap[ch]) {
                 return true;
             }
@@ -15900,9 +15888,9 @@
         opts = opts || {};
         var S = opts.newline ? '\n' : '';
         function convertElToString(el) {
-            var children = el.children, tag = el.tag, attrs = el.attrs;
+            var children = el.children, tag = el.tag, attrs = el.attrs, text = el.text;
             return createElementOpen(tag, attrs)
-                + encodeHTML(el.text)
+                + (tag !== 'style' ? encodeHTML(text) : text || '')
                 + (children ? "" + S + map(children, function (child) { return convertElToString(child); }).join(S) + S : '')
                 + createElementClose(tag);
         }
