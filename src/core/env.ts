@@ -82,9 +82,8 @@ function detect(ua: string, env: Env) {
     }
 
     env.svgSupported = typeof SVGRect !== 'undefined';
-    env.touchEventsSupported = 'ontouchstart' in window && !browser.ie && !browser.edge;
-    env.pointerEventsSupported = 'onpointerdown' in window
-        && (browser.edge || (browser.ie && +browser.version >= 11));
+    env.touchEventsSupported = 'ontouchstart' in window;
+    env.pointerEventsSupported = 'onpointerdown' in window;
     env.domSupported = typeof document !== 'undefined';
 
     const style = document.documentElement.style;
