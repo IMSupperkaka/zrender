@@ -69,9 +69,8 @@
             browser.weChat = true;
         }
         env.svgSupported = typeof SVGRect !== 'undefined';
-        env.touchEventsSupported = 'ontouchstart' in window && !browser.ie && !browser.edge;
-        env.pointerEventsSupported = 'onpointerdown' in window
-            && (browser.edge || (browser.ie && +browser.version >= 11));
+        env.touchEventsSupported = 'ontouchstart' in window;
+        env.pointerEventsSupported = 'onpointerdown' in window;
         env.domSupported = typeof document !== 'undefined';
         var style = document.documentElement.style;
         env.transform3dSupported = ((browser.ie && 'transition' in style)

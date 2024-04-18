@@ -392,6 +392,7 @@ function bindCommonProps(
             flushPathDrawn(ctx, scope);
             styleChanged = true;
         }
+        // @ts-ignore
         ctx.globalCompositeOperation = style.blend || DEFAULT_COMMON_STYLE.blend;
     }
     for (let i = 0; i < SHADOW_NUMBER_PROPS.length; i++) {
